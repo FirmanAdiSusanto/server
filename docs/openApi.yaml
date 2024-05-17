@@ -1,0 +1,259 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/FIRMANADISUSANTOO/cobaApitask/1.0.0
+info:
+  version: "1.0.0"
+  title: home-iot-api
+  description: The API for the EatBacon IOT project
+tags:
+  - name: user
+    description: Organize for user
+  - name: projek
+    description: Organize for posting
+  - name: comment
+    description: Organize for comment
+paths:
+  /users:
+    post:
+      tags: 
+        - user
+      description: "register user"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+            example:
+              nama: "anto"
+              email: "anto@gmail.com"
+              password: "anto"
+              hp: "08955"
+      responses:
+        '201':
+          description: "sukses menambahkan data"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiDataResponse'
+              example:
+                code: 201
+                message: "Berhasil menambahkan data"
+       
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+          
+    get:
+      tags: 
+        - user
+      security: 
+        - bearerAuth: []
+      description: "mendapatkan profile pengguna berdasarkan token"
+      responses:
+        '200':
+          description: "berhasil mendapatkan data"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiDataResponse'
+              example: 
+                code: 200
+                message: "berhasil mendapatkan data"
+                data:
+                  nama: "anto"
+                  email: "anto@gmail.com"
+                  hp: "08955"
+                  picture: "image/jpeg/png"
+        '500':
+              $ref: '#/components/responses/500'
+  /users/{email}:
+    put:
+      tags:
+        - user
+      parameters:
+         - in: path
+           name: email
+           required: true
+           schema:
+            type: string
+      security: 
+        - bearerAuth: []
+      summary: "update profile user"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+            example:
+               nama: "anto"
+               email: "anto@gmail.com"
+               hp: "08955"
+               picture: "image/jpeg/png"
+      responses:
+        '200':
+          description: "berhasil mengubah data"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiDataResponse'
+              example: 
+                code : 200
+                message: "berhasil mengubah data"
+                data:
+                  nama: "anto1"
+                  email: "anto1@gmail.com"
+                  password: "anto1"
+                  hp: "08955"
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+          
+    delete:
+      tags:
+        - user
+      summary: "Delete user"
+      description: "Deletes Email"
+      parameters:
+        - in: path
+          name: email
+          required: true
+          schema:
+            type: string
+      security:
+        - bearerAuth: []
+      responses:
+          
+        '200':
+          description: "berhasil menghapus data"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiDataResponse'
+              example:
+                code: 200
+                message: "Berhasil menghapus data"
+        '500':
+          $ref: '#/components/responses/500'
+
+  /login:
+    post:
+      tags:
+        - user
+      summary: "login user"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+            example:
+                  email: "anto1@gmail.com"
+                  password: "anto1"
+      
+      responses:
+        '200':
+          description: "sukses login"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiDataResponse'
+              example: 
+                code: 200
+                message: "berhasil login"
+                data:
+                  nama: "anto1"
+                  email: "anto1@gmail.com"
+                  token: "cunsdhshduhsdhfuhyerolsmklnkdsjbcjdhdgfyegfbcvdmkfirfbncmxn"
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - fullname
+        - username
+        - handphone
+        - email
+        - password
+      properties:
+        fullname:
+            type: string
+        username:
+            type: string
+        handphone:
+            type: string
+        email:
+            type: string
+        password:
+            type: string
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    ApiDataResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        data:
+          type: object
+        message:
+          type: string
+  requestBodies:
+    User:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/User'
+      required: true
+    UserArray:
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/User'
+      description: List of user object
+      required: true
+  responses:
+    '400':
+      description: "Data yang dikirim tidak sesuai"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiResponse'
+          example: 
+            code: 400
+            message: "terdapat kesalahan pada data input"
+    '500':
+      description: "Server error"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiResponse'
+          example:
+            code: 500
+            message: "Terjadi kesalahan pada server"
+  securitySchemes:
+    bearerAuth:            
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
